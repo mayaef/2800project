@@ -1,0 +1,99 @@
+(defdata lor (listof rational))
+(defdata lolor (listof lor))
+(defdata lololor (listof lolor))
+
+(definec app2 (x :tl y :tl) :tl
+  (if (endp x)
+    y
+    (cons (first x) (app2 (rest x) y))))
+
+
+(definec len2 (x :tl) :nat
+  (if (endp x)
+    0
+    (+ 1 (len2 (rest x)))))
+
+; checks to see if the given list of rationals is in descending order
+(definec descending (ls :lor) :bool
+  (cond
+   ((endp ls) t)
+   ((endp (cdr ls)) t)
+   (t (and (> (car ls) (car (cdr ls)))
+           (descending (cdr ls))))))
+
+; adds the given rational to the front of every list in the lolor
+; if it is greater than the first of each list in the lolor
+(definec add-rat (r :rational ls :lolor) :lolor
+  (cond ((endp ls) '())
+        (t (cond ((endp (car ls)) '())
+                 (t (if (> r (car (car ls)))
+                      (cons (cons r (car ls)) (add-rat r (cdr ls)))
+                      (add-rat r (cdr ls))))))))
+
+; builds set of list of single items in set
+(definec single (ls :lor) :lolor
+  (cond
+   ((endp ls) nil)
+   ((consp ls) (cons (cons (car ls) nil) (single (cdr ls))))))
+
+; builds list of subsets of size of accumulators lists plus one
+(definec build-subset (ls :lor acc :lololor) :lolor
+  (cond ((endp ls) '())
+        ((endp acc) (single ls))
+        (t (app2 (add-rat (car ls) (car acc))
+                 (build-subset (cdr ls) acc)))))
+
+; adds subsets of increasing size to the accumulator
+(definec add-subset (ls :lor acc :lololor) :lololor
+  (cond ((>= (len2 acc) (len2 ls)) acc)
+        (t (add-subset ls (cons (build-subset ls acc) acc)))))
+
+; appends items in the lololor into a lolor
+(definec combine (ls :lololor) :lolor
+  (cond ((endp ls) (cons '() '()))
+        (t (app2 (car ls) (combine (cdr ls))))))
+
+; make the powerset of the given set
+(definec powerset (ls :lor) :lolor
+  :ic (descending ls)
+  (combine (add-subset ls '())))
+
+; PROOF
+;we need to prove that powerset contracts -> size gets smaller and numbers get smaller
+
+;; size of lists getting smaller
+(definec shorter-next (ls :lolor) :bool 
+        (> (len2 (car ls)) (len2 (car (cdr ls)))))
+
+;; first list 'greater' than second list of same length
+(definec smaller-next-help (ls1 :lor ls2 :lor) :bool
+  (cond ((or (endp ls2) (endp ls1)) t)
+        (t (or (> (car ls1) (car ls2)) (smaller-next-help (cdr ls1) (cdr ls2))))))
+
+;; numbers in decreasing order, when size 3: (4 3 2) (4 3 1) (3 2 1)
+(definec smaller-next (ls :lolor) :bool
+  (cond ((endp ls) t)
+        (t (and (smaller-next-help (car ls) (car (cdr ls)))
+              (smaller-next (cdr ls))))))
+
+
+;; THE PROOF
+;(implies (and (lorp ls) (descending ls))
+ ; (or (shorter-next (powerset ls)) (smaller-next (powerset ls))))
+
+(thm (implies (and (lorp ls) (descending ls))
+  (or (shorter-next (powerset ls)) (smaller-next (powerset ls)))))
+
+
+
+
+
+
+
+
+
+(4 3 2 1)
+(4 3 2) (4 3 1) (4 2 1) (3 2 1)
+(4 3) (4 2) (4 1) (3 2) (3 1) (2 1)
+(4) (3) (2) (1)
+()
