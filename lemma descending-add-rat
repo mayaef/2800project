@@ -1,0 +1,29 @@
+Lemma for descending-add-rat
+(implies (and (rationalp n) (lolorp ls) (descending-powerset ls))
+        (descending-powerset (add-rat n ls)))
+
+This will be an inductive proof on (add-rat n ls) but we can begin by looking at the inductive case.
+
+(implies (and (rationalp n) (lolorp (cdr ls)) (> n (car (car ls))) (descending-powerset (cdr ls)))
+        (descending-powerset (add-rat n (cdr ls))))
+
+Context:
+C1. (rationalp n)
+C2. (lolorp (cdr ls))
+C3. (> n (car (car ls)))
+
+Derived:
+D1. (descending-powerset (add-rat n (cdr ls)))
+D2. (descending (cons n (car ls))) {lemma cons-descending-list ((n n) (ls ls))}
+
+Goal:
+(descending-powerset (add-rat n ls))
+
+Proof:
+(add-rat n ls)
+= {Def add-rat, C3}
+(cons (cons n (car ls)) (add-rat n (cdr ls)))
+= {D2, D1, lemma descending-powerset ( (ls (cons n (car ls))) (ps (add-rat n (cdr ls))) )  }
+(descending-powerset (cons (cons n (car ls)) (add-rat n (cdr ls))))
+= {Def add-rat}
+(descending-powerset (add-rat n ls))
