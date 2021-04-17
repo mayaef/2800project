@@ -1,0 +1,18 @@
+Lemma descending-list
+;; Proves that if we cons a rational greater than the first item in the list to a descending list, the list will be descending
+(implies (and (rationalp n) (lorp ls) (descending ls) (> n (car ls)))
+         (descending (cons n ls)))
+
+Lemma descending-powerset-pf
+;; Proves that if we cons a descending list (greater than first list) to a descending powerset, still have descending powerset
+(implies (and (lorp ls) (descending ls) (lolorp ps) (descending-powerset ps))
+              (descending-powerset (cons ls ps)))))
+
+Lemma descending-add-rat
+;; Proves that add-rat returns a new descending powerset (with items of the same length*)
+(implies (and (natp n) (lolorp ls) (descending-powerset ls))
+        (descending-powerset (add-rat n ls)))
+        
+; * need to account for this in lemma
+
+Lemma build-add-rat
