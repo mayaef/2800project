@@ -39,3 +39,13 @@ Lemma greater-equal-subset:
 ;; if car powerset ls length= car cdr powerset ls , then we go to the second case
 ;; 1 case where they are equal -> lemma about length
 ;; 2 case where they aren't equal -> lemma about length not equal
+
+;; Lemma 5: add-subset
+(implies (and (lorp ls) (lololorp ls))
+    (> (len2 (car (add-subset ls acc))) (len2 (car (add-subset ls (cdr acc))))))
+(descending-powerset (add-subset ))
+
+(add-subset ls acc) ... (len4, len3, len2, len1)
+(add-subset ls (cdr acc)) ... (len3, len2, len1)
+
+(len2 (car (add-subset ls acc))) > (len2 (car (add-subset ls (cdr acc))))
