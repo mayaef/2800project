@@ -13,6 +13,7 @@
     0
     (+ 1 (len2 (rest x)))))
 
+;lor -> bool
 ; checks to see if the given list of rationals is in descending order
 (definec descending (ls :lor) :bool
   (cond
@@ -21,6 +22,7 @@
    (t (and (> (car ls) (car (cdr ls)))
            (descending (cdr ls))))))
 
+;rational lolor -> lolor
 ; adds the given rational to the front of every list in the lolor
 ; if it is greater than the first of each list in the lolor
 (definec add-rat (r :rational ls :lolor) :lolor
@@ -30,12 +32,14 @@
                       (cons (cons r (car ls)) (add-rat r (cdr ls)))
                       (add-rat r (cdr ls))))))))
 
+;lor -> lolor
 ; builds set of list of single items in set
 (definec single (ls :lor) :lolor
   (cond
    ((endp ls) nil)
    ((consp ls) (cons (cons (car ls) nil) (single (cdr ls))))))
 
+;lor lololor -> lolor
 ; builds list of subsets of size of accumulators lists plus one
 (definec build-subset (ls :lor acc :lololor) :lolor
   (cond ((endp ls) '())
@@ -43,16 +47,19 @@
         (t (app2 (add-rat (car ls) (car acc))
                  (build-subset (cdr ls) acc)))))
 
+;lor lololor -> lololor
 ; adds subsets of increasing size to the accumulator
 (definec add-subset (ls :lor acc :lololor) :lololor
   (cond ((>= (len2 acc) (len2 ls)) acc)
         (t (add-subset ls (cons (build-subset ls acc) acc)))))
 
+;lololor -> lolor
 ; appends items in the lololor into a lolor
 (definec combine (ls :lololor) :lolor
   (cond ((endp ls) (cons '() '()))
         (t (app2 (car ls) (combine (cdr ls))))))
 
+;lor -> lolor
 ; make the powerset of the given set
 (definec powerset (ls :lor) :lolor
   :ic (descending ls)
