@@ -1,0 +1,28 @@
+;; THE PROOF
+
+(thm (implies (and (lorp ls) (descending ls))
+  (descending-powerset ls)))
+  
+;; lemmas we will need!
+
+Lemma cons-descending-list
+;; if you cons an element that is greater than descending list, get a descending list
+(implies (and (rationalp n) (lorp ls) (descending ls) (> n (car ls)))
+         (descending (cons n ls)))
+
+Lemma descending-powerset
+(implies (and (lorp ls) (descending ls) (lolorp ps) (descending-powerset ps))
+              (descending-powerset (cons ls ps)))
+
+Lemma for descending-add-rat
+(implies (and (rationalp n) (lolorp ls) (descending-powerset ls))
+        (descending-powerset (add-rat n ls)))
+
+Lemma greater-equal-subset:
+(implies (and (lorp ls) (descending ls))
+   (or (= (len2 (car (powerset ls))) (len2 (car (cdr (powerset ls))))) 
+         (> (len2 (car (powerset ls))) (len2 (car (cdr (powerset ls))))) ))
+
+;; if car powerset ls length= car cdr powerset ls , then we go to the second case
+;; 1 case where they are equal -> lemma about length
+;; 2 case where they aren't equal -> lemma about length not equal
