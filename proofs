@@ -14,9 +14,22 @@ Lemma descending-powerset
 (implies (and (lorp ls) (descending ls) (lolorp ps) (descending-powerset ps))
               (descending-powerset (cons ls ps)))
 
-Lemma for descending-add-rat
+Lemma descending-add-rat
 (implies (and (rationalp n) (lolorp ls) (descending-powerset ls))
         (descending-powerset (add-rat n ls)))
+        
+Lemma descending build-subset
+(implies (and (descending ls) (lololorp acc))
+(descending-powerset (build-subset ls acc)))
+
+;;how this proof would work/what it would prove:
+
+;- (> (car ls) (car (cdr ls))) (4 3 2 1... 4>3)
+;- (> (car (car (build-subset ls acc))) (car (car (build-subset (cdr ls) acc))))
+;- (== (len2 (car (build-subset ls acc))) (len2 (car (build-subset (cdr ls) acc))))
+
+;(car (car (add-rat (car ls) (car acc))))  > (car (car (build-subset (cdr ls) acc)))
+;(car ls)                                  > (car (cdr ls))
 
 Lemma greater-equal-subset:
 (implies (and (lorp ls) (descending ls))
