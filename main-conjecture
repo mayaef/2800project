@@ -1,0 +1,54 @@
+;; MAIN PROOF: 
+(thm (implies (and (lorp ls) (descending ls))
+  (descending-powerset (powerset ls))))
+
+Conjecture 1:
+(implies (and (lorp ls) (descending ls))
+         (descending-powerset (powerset ls)))
+
+Proof by: Induction on (lorp ls)
+
+Inductive Case ind:
+(implies (and (lorp ls) (descending ls) (consp ls) (lolorp (powerset ls))
+              (implies (and (lorp (cdr ls)) (descending (cdr ls)))
+                       (descending-powerset (powerset (cdr ls)))))
+         (descending-powerset (powerset ls)))
+  
+Context:
+C1. (lorp ls)
+C2. (descending ls)
+C3. (consp ls)
+C4. (implies (and (lorp (cdr ls)) (descending (cdr ls)))
+             (descending-powerset (powerset (cdr ls))))
+C5. (lolorp (powerset ls))
+
+Derived Context
+D1. (lorp (cdr ls)) {C1, C3}
+D2. (descending (cdr ls)) {C2, C3, descending-list}
+D3. (descending-powerset (powerset (cdr ls))) {D1, D2, C3, C4, MP}
+
+Goal:
+(descending-powerset (powerset ls))
+
+Proof:
+(descending-powerset (powerset ls))
+= {def descending-powerset}
+ (cond ((endp ls) t)
+        (t (and (descending-powerset-help (car (powerset ls)) (car (cdr (powerset ls))))
+              (descending-powerset (cdr (powerset ls))))))
+= {C3}
+(and (descending-powerset-help (car (powerset ls)) (car (cdr (powerset ls))))
+              (descending-powerset (cdr (powerset ls))))
+= {D3}
+(and (descending-powerset-help (car (powerset ls)) (car (cdr (powerset ls)))) t)
+= {PL}
+(descending-powerset-help (car (powerset ls)) (car (cdr (powerset ls))))
+= {Def descending-powerset-help}
+ (cond ((endp (car (cdr (powerset ls)))) t)
+        ((and (endp (car (powerset ls))) (consp (car (cdr (powerset ls))))) nil)
+        (t (or (> (car (car (powerset ls))) (car (car (cdr (powerset ls))))) (descending-powerset-help (cdr (car (powerset ls))) (cdr (car (cdr (powerset ls))))))))
+
+
+;; at this point, we use a lemma to show that 
+- (and (endp (car (powerset ls))) (consp (car (cdr (powerset ls))))) is nil
+doing so would use our other lemmas
