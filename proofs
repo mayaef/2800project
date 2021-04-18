@@ -10,7 +10,7 @@ Lemma cons-descending-list
 (implies (and (rationalp n) (lorp ls) (descending ls) (> n (car ls)))
          (descending (cons n ls)))
 
-Lemma descending-powerset
+Lemma descending-powerset-pf
 (implies (and (lorp ls) (descending ls) (lolorp ps) (descending-powerset ps))
               (descending-powerset (cons ls ps)))
 
@@ -49,3 +49,22 @@ Lemma greater-equal-subset:
 (add-subset ls (cdr acc)) ... (len3, len2, len1)
 
 (len2 (car (add-subset ls acc))) > (len2 (car (add-subset ls (cdr acc))))
+
+
+;; Main proof:
+
+(thm (implies (and (lorp ls) (descending ls))
+  (descending-powerset ls)))
+
+;; first list elements are 'greater' than second list of same length
+(definecd descending-powerset-help (ls1 :lor ls2 :lor) :bool
+  (cond ((endp ls2) t)
+        ((and (endp ls1) (consp ls2)) nil)
+        (t (or (> (car ls1) (car ls2)) (smaller-next-help (cdr ls1) (cdr ls2))))))
+
+;; numbers in decreasing order, when size 3: (4 3 2) (4 3 1) (3 2 1)
+(definecd descending-powerset (ls :lolor) :bool
+  (cond ((endp ls) t)
+        (t (and (descending-powerset-help (car ls) (car (cdr ls)))
+              (descending-powerset-help (cdr ls))))))
+ 
