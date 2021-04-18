@@ -50,6 +50,13 @@ Lemma greater-equal-subset:
 
 (len2 (car (add-subset ls acc))) > (len2 (car (add-subset ls (cdr acc))))
 
+*Main Lemma*
+;; Lemma 6: car-cdr-powerset
+(implies (and (lorp ls) (descending ls) (lolorp (powerset ls)))
+(equal 
+(and (endp (car (powerset ls))) (consp (car (cdr (powerset ls))))) nil))
+
+
 
 ;; Main proof:
 
