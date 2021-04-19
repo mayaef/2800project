@@ -62,16 +62,18 @@ Lemma greater-equal-subset:
 
 (thm (implies (and (lorp ls) (descending ls))
   (descending-powerset ls)))
-
-;; first list elements are 'greater' than second list of same length
-(definecd descending-powerset-help (ls1 :lor ls2 :lor) :bool
-  (cond ((endp ls2) t)
+  
+  
+(definec compare-lists (ls1 :lor ls2 :lor) :bool
+  (cond ((and (endp ls1) (endp ls2)) nil)
+        ((and (consp ls1) (endp ls2)) t)
         ((and (endp ls1) (consp ls2)) nil)
-        (t (or (> (car ls1) (car ls2)) (smaller-next-help (cdr ls1) (cdr ls2))))))
+        (t (or (compare-lists (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2)) ))))
 
 ;; numbers in decreasing order, when size 3: (4 3 2) (4 3 1) (3 2 1)
-(definecd descending-powerset (ls :lolor) :bool
+(definec descending-powerset (ls :lolor) :bool
   (cond ((endp ls) t)
-        (t (and (descending-powerset-help (car ls) (car (cdr ls)))
-              (descending-powerset-help (cdr ls))))))
+        ((endp (cdr ls)) t)
+        (t (and (compare-lists (car ls) (car (cdr ls)))
+              (descending-powerset (cdr ls))))))
  
