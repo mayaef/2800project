@@ -62,8 +62,7 @@ Lemma greater-equal-subset:
 
 (thm (implies (and (lorp ls) (descending ls))
   (descending-powerset ls)))
-  
-  
+ 
 (definec compare-lists (ls1 :lor ls2 :lor) :bool
   (cond ((and (endp ls1) (endp ls2)) nil)
         ((and (consp ls1) (endp ls2)) t)
@@ -77,3 +76,19 @@ Lemma greater-equal-subset:
         (t (and (compare-lists (car ls) (car (cdr ls)))
               (descending-powerset (cdr ls))))))
  
+ 
+ ;; function to take in an element and powerset to build new powerset
+ (definec comp-list (ls1 :lolor ls2 :lolor) :lolor
+  (cond
+   ((and (endp ls1) (endp ls2)) nil)
+   ((endp ls1) ls2)
+   ((endp ls2) ls1)
+   (t (if (>= (len2 (car ls1)) (len2 (car ls2)))
+        (cons (car ls1) (comp-list (cdr ls1) ls2))
+        (cons (car ls2) (comp-list ls1 (cdr ls2)))))))
+
+(definec add-to-first (x :rational ls :lolor) :lolor
+  (app2 (add-rat x ls) (list (list x))))
+
+(definec powerset-2 (x :rational ls :lolor) :lolor
+  (comp-list (add-to-first x ls) ls))
