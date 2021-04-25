@@ -1,66 +1,116 @@
-(defdata lor (listof rational))
-(defdata lolor (listof lor))
-(defdata lololor (listof lolor))
-
 (definec app2 (x :tl y :tl) :tl
   (if (endp x)
     y
     (cons (first x) (app2 (rest x) y))))
-
 
 (definec len2 (x :tl) :nat
   (if (endp x)
     0
     (+ 1 (len2 (rest x)))))
 
-;lor -> bool
-; checks to see if the given list of rationals is in descending order
-(definec descending (ls :lor) :bool
-  (cond
-   ((endp ls) t)
-   ((endp (cdr ls)) t)
-   (t (and (> (car ls) (car (cdr ls)))
-           (descending (cdr ls))))))
+(defdata lor (listof rational))
+(defdata lolor (listof lor))
+(defdata lololor (listof lolor))
 
-;rational lolor -> lolor
-; adds the given rational to the front of every list in the lolor
-; if it is greater than the first of each list in the lolor
+;; checks to see if the given list of rationals is in descendingp order
+(definec descendingp (ls :lor) :bool
+  (or (endp (cdr ls))
+      (and (> (car ls) (car (cdr ls)))
+           (descendingp (cdr ls)))))
+
+;; checks the 2 given lists and makes sure they are in the right order
+(definec compare-lists (ls1 :lor ls2 :lor) :bool
+  (cond ((and (endp ls1) (endp ls2)) nil)
+  ((and (consp ls1) (endp ls2)) t)
+        ((and (endp ls1) (consp ls2)) nil)
+        (t (or (compare-lists (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2))))))
+
+;; checks if the given lolor is a descendingp powerset
+(definec descending-powersetp (ls :lolor) :bool
+  (cond ((endp ls) t)
+        ((endp (cdr ls)) (descendingp (car ls)))
+        (t (and (compare-lists (car ls) (car (cdr ls)))
+                (descendingp (car ls))
+                 (descending-powersetp (cdr ls))))))
+
+;; checks if the rational is greater than all the values in the list of rationals
+(definec gte-allp (x :rational ls :lor) :bool
+  (or (lendp ls) (and (> x (car ls)) (gte-allp x (cdr ls)))))
+
+;; adds the given rational to the front of every list in the lolor
+;; if it is greater than the first of each list in the lolor
 (definec add-rat (r :rational ls :lolor) :lolor
   (cond ((endp ls) '())
-        (t (cond ((endp (car ls)) '())
-                 (t (if (> r (car (car ls)))
-                      (cons (cons r (car ls)) (add-rat r (cdr ls)))
-                      (add-rat r (cdr ls))))))))
+        ((gte-allp r (car ls))
+         (cons (cons r (car ls)) (add-rat r (cdr ls))))
+        (t (add-rat r (cdr ls)))))
 
-;lor -> lolor
-; builds set of list of single items in set
-(definec single (ls :lor) :lolor
+;; function to take in an element and powerset to build new powerset
+(definec merge-sort (ls1 :lolor ls2 :lolor) :lolor
   (cond
-   ((endp ls) nil)
-   ((consp ls) (cons (cons (car ls) nil) (single (cdr ls))))))
+   ((endp ls1) ls2)
+   ((endp ls2) ls1)
+   ((== (car ls1) (car ls2)) (cons (car ls1) (merge-sort (cdr ls1) (cdr ls2))))
+   (t (if (>= (len2 (car ls1)) (len2 (car ls2)))
+        (cons (car ls1) (merge-sort (cdr ls1) ls2))
+        (cons (car ls2) (merge-sort ls1 (cdr ls2)))))))
 
-;lor lololor -> lolor
-; builds list of subsets of size of accumulators lists plus one
-(definec build-subset (ls :lor acc :lololor) :lolor
-  (cond ((endp ls) '())
-        ((endp acc) (single ls))
-        (t (app2 (add-rat (car ls) (car acc))
-                 (build-subset (cdr ls) acc)))))
-
-;lor lololor -> lololor
-; adds subsets of increasing size to the accumulator
-(definec add-subset (ls :lor acc :lololor) :lololor
-  (cond ((>= (len2 acc) (len2 ls)) acc)
-        (t (add-subset ls (cons (build-subset ls acc) acc)))))
-
-;lololor -> lolor
-; appends items in the lololor into a lolor
-(definec combine (ls :lololor) :lolor
-  (cond ((endp ls) (cons '() '()))
-        (t (app2 (car ls) (combine (cdr ls))))))
-
-;lor -> lolor
-; make the powerset of the given set
+;; creates the powerset of the given list of rationals
 (definec powerset (ls :lor) :lolor
-  :ic (descending ls)
-  (combine (add-subset ls '())))
+  :ic (descendingp ls)
+  (cond
+   ((endp ls) (cons '() '()))
+   (t (merge-sort (add-rat (car ls) (powerset (cdr ls))) (powerset (cdr ls))))))
+
+;; creates a powerset with the given rational
+(definec powerset-cons (x :rational ls :lolor) :lolor
+  (merge-sort (add-rat x ls) ls))
+
+;; Checker tests
+; descendingp
+(check= (descendingp '(4 3 2 1)) t)
+(check= (descendingp '(3 2 4 1)) nil)
+(check= (descendingp nil) t)
+(check= (descendingp '(1)) t)
+
+; compare-lists
+(check= (compare-lists '() '()) nil)
+(check= (compare-lists '(1) '()) t)
+(check= (compare-lists '() '(1)) nil)
+(check= (compare-lists '(3 1) '(2)) t)
+(check= (compare-lists '(5 3 2) '(5 4 2)) nil)
+
+; descending-powersetp
+(check= (descending-powersetp '()) t)
+(check= (descending-powersetp '((4 3 2) (4 3 1) (3 2 1))) t)
+(check= (descending-powersetp '((4 3 2) (5 3 2))) nil)
+(check= (descending-powersetp '((4 3) (4 3 2))) nil)
+
+; gte-allp
+(check= (gte-allp 3 '(3 2)) nil)
+(check= (gte-allp 4 '(3 2)) t)
+(check= (gte-allp 3 '(1 4)) nil)
+(check= (gte-allp 5 '(4 3 2 1 0 3)) t)
+
+; add-rat
+(check= (add-rat 3 '((2 1))) '((3 2 1)))
+(check= (add-rat 2 '((1))) '((2 1)))
+(check= (add-rat 4 '((3 2 1))) '((4 3 2 1)))
+(check= (add-rat 3 (powerset '(2 1))) '((3 2 1) (3 2) (3 1) (3)))
+
+; merge-sort
+(check= (merge-sort '((3 2 1) (3 2) (3 1) (3)) '((2 1) (2) (1) nil))
+        '((3 2 1) (3 2) (3 1) (2 1) (3) (2) (1) nil))
+(check= (merge-sort nil nil) nil)
+(check= (merge-sort '((2 1) (2) (1) nil) nil) '((2 1) (2) (1) nil))
+(check= (merge-sort nil '((1) nil)) '((1) nil))
+
+; powerset
+(check= (powerset nil) (list nil))
+(check= (powerset '(3 2 1)) '((3 2 1) (3 2) (3 1) (2 1) (3) (2) (1) nil))
+(check= (powerset '(1)) '((1) nil))
+
+; powerset-cons
+(check= (powerset-cons 3 '((2 1) (2) (1) nil)) '((3 2 1) (3 2) (3 1) (2 1) (3) (2) (1) nil))
+(check= (powerset-cons 1 nil) nil)
+(check= (powerset-cons 2 '((1) nil)) '((2 1) (2) (1) nil))
