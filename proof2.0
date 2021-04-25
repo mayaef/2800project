@@ -1,0 +1,35 @@
+
+Main proof:
+
+(thm (implies (and (lorp ls) 
+                   (consp ls) ;;could be (rationalp (car ls))
+                   (descending ls) 
+                   (descending-powerset (powerset (cons (car ls) (cdr ls)))))
+              (descending-powerset (powerset-cons (car ls) (powerset (cdr ls)))))
+     :hints (("Goal" :use descending-pw-pwcons)))
+
+ Lemmas:
+ 
+(defthm descending-pw-pwcons (implies (and (rationalp x) 
+                   (lorp ls) 
+                   (descending ls) 
+                   (descending-powerset (powerset (cons x ls))))
+              (descending-powerset (powerset-cons x (powerset ls))))
+  :hints (("Goal" :use pw-pwcons)))
+
+(defthm pw-pwcons (implies (and (rationalp x) (lorp ls) (descending ls))
+              (equal (powerset (cons x ls)) 
+                     (powerset-cons x (powerset ls)))))
+                     
+;; Something we thought we would need but didn't
+(defthm descending-ls (implies (and (rationalp x) (lorp ls) (> x (car ls)) (descending ls))
+              (descending (cons x ls))))
+              
+;; What we want to prove using this but haven't been able to yet
+(thm (implies (and (rationalp x) 
+                   (lorp ls) 
+                   (descending ls) 
+                   (> x (car ls))
+                   (descending-powerset (powerset ls)))
+              (descending-powerset (powerset-cons x (powerset ls))))
+  :hints (("Goal" :use pw-pwcons)))
