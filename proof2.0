@@ -1,49 +1,49 @@
-
-Main proof:
-
-(thm (implies (and (lorp ls) 
-                   (consp ls) ;;could be (rationalp (car ls))
-                   (descending ls) 
-                   (descending-powerset (powerset (cons (car ls) (cdr ls)))))
-              (descending-powerset (powerset-cons (car ls) (powerset (cdr ls)))))
-     :hints (("Goal" :use descending-pw-pwcons)))
-
- Lemmas:
- 
-(defthm descending-pw-pwcons (implies (and (rationalp x) 
-                   (lorp ls) 
-                   (descending ls) 
-                   (descending-powerset (powerset (cons x ls))))
-              (descending-powerset (powerset-cons x (powerset ls))))
-  :hints (("Goal" :use pw-pwcons)))
-
-(defthm pw-pwcons (implies (and (rationalp x) (lorp ls) (descending ls))
+(defthm pw-pwcons (implies (and (rationalp x) (lorp ls) (descendingp ls) (> x (car ls)))
               (equal (powerset (cons x ls)) 
                      (powerset-cons x (powerset ls)))))
-                     
-;; Something we thought we would need but didn't
-(defthm descending-ls (implies (and (rationalp x) (lorp ls) (> x (car ls)) (descending ls))
-              (descending (cons x ls))))
-              
-;; What we want to prove using this but haven't been able to yet
-(thm (implies (and (rationalp x) 
-                   (lorp ls) 
-                   (descending ls) 
-                   (> x (car ls))
-                   (descending-powerset (powerset ls)))
-              (descending-powerset (powerset-cons x (powerset ls))))
-  :hints (("Goal" :use pw-pwcons)))
-  
- ;; lemma needed to prove the main proof
- (skip-proofs (defthm pw-cons-descending (implies (and (rationalp x)
-                   (lorp ls) 
-                   (descending ls)
-                   (> x (car ls))
-                   (descending-powerset (powerset ls)))
-              (descending-powerset (powerset-cons x (powerset ls))))))
 
-;; main proof
+(defthm descending-pw-pwcons (implies (and (rationalp x) 
+                   (lorp ls) 
+                   (descendingp ls) 
+                   (> x (car ls))
+                   (descending-powersetp (powerset (cons x ls))))
+              (descending-powersetp (powerset-cons x (powerset ls))))
+  :hints (("Goal" :use pw-pwcons)))
+
+(skip-proofs (defthm desc-add-rat (implies (and (rationalp x)
+                             (lorp ls)
+                             (descendingp ls)
+                             (< (car ls) x)
+                             (descending-powersetp (powerset ls)))
+                             (descending-powersetp (add-rat x (powerset ls))))))
+
+(skip-proofs (defthm expand-merge-sort
+               (implies (and (descending-powersetp ls1)
+                             (descending-powersetp ls2)
+                             (descending-powersetp (powerset ls)))
+                        (descending-powersetp (merge-sort ls1 ls2)))))
+
+(defthm expand-powerset 
+               (implies (and (rationalp x)
+                             (lorp ls)
+                             (descendingp ls)
+                             (< (car ls) x)
+                             (descending-powersetp (powerset ls)))
+                        (descending-powersetp (merge-sort (add-rat x (powerset ls))
+                                                        (powerset ls))))
+               :hints (("Goal" :use desc-add-rat)
+                       ("Goal" :use expand-merge-sort)))
+
+
+(defthm pw-cons-descendingp (implies (and (rationalp x)
+                                         (lorp ls) 
+                                         (descendingp ls)
+                                         (> x (car ls))
+                                         (descending-powersetp (powerset ls)))
+                                    (descending-powersetp (powerset-cons x (powerset ls))))
+  :hints (("Goal" :use expand-powerset)))
+
 (thm (implies (and (lorp ls)
-                   (descending ls))
-              (descending-powerset (powerset ls)))
-     :hints (("Goal" :use pw-cons-descending)))
+                   (descendingp ls))
+              (descending-powersetp (powerset ls)))
+     :hints (("Goal" :use pw-cons-descendingp)))
