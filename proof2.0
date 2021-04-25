@@ -33,3 +33,17 @@ Main proof:
                    (descending-powerset (powerset ls)))
               (descending-powerset (powerset-cons x (powerset ls))))
   :hints (("Goal" :use pw-pwcons)))
+  
+ ;; lemma needed to prove the main proof
+ (skip-proofs (defthm pw-cons-descending (implies (and (rationalp x)
+                   (lorp ls) 
+                   (descending ls)
+                   (> x (car ls))
+                   (descending-powerset (powerset ls)))
+              (descending-powerset (powerset-cons x (powerset ls))))))
+
+;; main proof
+(thm (implies (and (lorp ls)
+                   (descending ls))
+              (descending-powerset (powerset ls)))
+     :hints (("Goal" :use pw-cons-descending)))
