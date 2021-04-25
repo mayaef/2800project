@@ -35,7 +35,7 @@
                        ("Goal" :use expand-merge-sort)))
 
 
-(defthm pw-cons-descendingp (implies (and (rationalp x)
+(defthm pw-cons-descending (implies (and (rationalp x)
                                          (lorp ls) 
                                          (descendingp ls)
                                          (> x (car ls))
@@ -46,4 +46,4 @@
 (thm (implies (and (lorp ls)
                    (descendingp ls))
               (descending-powersetp (powerset ls)))
-     :hints (("Goal" :use pw-cons-descendingp)))
+     :hints (("Goal" :use pw-cons-descending)))
