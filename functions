@@ -21,18 +21,18 @@
 
 ;; checks the 2 given lists and makes sure they are in the right order
 ;; lor lor -> bool
-(definec compare-lists (ls1 :lor ls2 :lor) :bool
+(definec compare-listsp (ls1 :lor ls2 :lor) :bool
   (cond ((and (endp ls1) (endp ls2)) nil)
   ((and (consp ls1) (endp ls2)) t)
         ((and (endp ls1) (consp ls2)) nil)
-        (t (or (compare-lists (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2))))))
+        (t (or (compare-lists0 (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2))))))
 
 ;; checks if the given lolor is a descendingp powerset
 ;; lolor --> bool
 (definec descending-powersetp (ls :lolor) :bool
   (cond ((endp ls) t)
         ((endp (cdr ls)) (descendingp (car ls)))
-        (t (and (compare-lists (car ls) (car (cdr ls)))
+        (t (and (compare-listsp (car ls) (car (cdr ls)))
                 (descendingp (car ls))
                  (descending-powersetp (cdr ls))))))
 
@@ -83,12 +83,12 @@
 (check= (descendingp nil) t)
 (check= (descendingp '(1)) t)
 
-; compare-lists
-(check= (compare-lists '() '()) nil)
-(check= (compare-lists '(1) '()) t)
-(check= (compare-lists '() '(1)) nil)
-(check= (compare-lists '(3 1) '(2)) t)
-(check= (compare-lists '(5 3 2) '(5 4 2)) nil)
+; compare-listsp
+(check= (compare-listsp '() '()) nil)
+(check= (compare-listsp '(1) '()) t)
+(check= (compare-listsp '() '(1)) nil)
+(check= (compare-listsp '(3 1) '(2)) t)
+(check= (compare-listsp '(5 3 2) '(5 4 2)) nil)
 
 ; descending-powersetp
 (check= (descending-powersetp '()) t)
