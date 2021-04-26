@@ -2,8 +2,6 @@
 
 (thm (implies (and (lorp ls) (descending ls))
   (descending-powerset ls)))
-  
-;; lemmas we will need!
 
 Lemma cons-descending-list
 ;; if you cons an element that is greater than descending list, get a descending list
@@ -22,75 +20,31 @@ Lemma descending build-subset
 (implies (and (descending ls) (lololorp acc))
 (descending-powerset (build-subset ls acc)))
 
-;;how this proof would work/what it would prove:
-
-;- (> (car ls) (car (cdr ls))) (4 3 2 1... 4>3)
-;- (> (car (car (build-subset ls acc))) (car (car (build-subset (cdr ls) acc))))
-;- (== (len2 (car (build-subset ls acc))) (len2 (car (build-subset (cdr ls) acc))))
-
-;(car (car (add-rat (car ls) (car acc))))  > (car (car (build-subset (cdr ls) acc)))
-;(car ls)                                  > (car (cdr ls))
-
 Lemma greater-equal-subset:
 (implies (and (lorp ls) (descending ls))
    (or (= (len2 (car (powerset ls))) (len2 (car (cdr (powerset ls))))) 
          (> (len2 (car (powerset ls))) (len2 (car (cdr (powerset ls))))) ))
-
-;; if car powerset ls length= car cdr powerset ls , then we go to the second case
-;; 1 case where they are equal -> lemma about length
-;; 2 case where they aren't equal -> lemma about length not equal
 
 ;; Lemma 5: add-subset
 (implies (and (lorp ls) (lololorp ls))
     (> (len2 (car (add-subset ls acc))) (len2 (car (add-subset ls (cdr acc))))))
 (descending-powerset (add-subset ))
 
-(add-subset ls acc) ... (len4, len3, len2, len1)
-(add-subset ls (cdr acc)) ... (len3, len2, len1)
-
-(len2 (car (add-subset ls acc))) > (len2 (car (add-subset ls (cdr acc))))
-
-*Main Lemma*
 ;; Lemma 6: car-cdr-powerset
 (implies (and (lorp ls) (descending ls) (lolorp (powerset ls)))
 (equal 
 (and (endp (car (powerset ls))) (consp (car (cdr (powerset ls))))) nil))
 
+;; lemma to show the powerset and powerset-cons relationship
+(defthm pw-pwcons (implies (and (rationalp x) (lorp ls) (descendingp ls) (> x (car ls)))
+              (equal (powerset (cons x ls)) 
+                     (powerset-cons x (powerset ls)))))
 
-
-;; Main proof:
-
-(thm (implies (and (lorp ls) (descending ls))
-  (descending-powerset ls)))
- 
-(definec compare-lists (ls1 :lor ls2 :lor) :bool
-  (cond ((and (endp ls1) (endp ls2)) nil)
-        ((and (consp ls1) (endp ls2)) t)
-        ((and (endp ls1) (consp ls2)) nil)
-        (t (or (compare-lists (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2)) ))))
-
-;; numbers in decreasing order, when size 3: (4 3 2) (4 3 1) (3 2 1)
-(definec descending-powerset (ls :lolor) :bool
-  (cond ((endp ls) t)
-        ((endp (cdr ls)) t)
-        (t (and (compare-lists (car ls) (car (cdr ls)))
-              (descending-powerset (cdr ls))))))
- 
- 
- (definec comp-list (ls1 :lolor ls2 :lolor) :lolor
-  (cond
-   ((endp ls1) ls2)
-   ((endp ls2) ls1)
-   ((== (car ls1) (car ls2)) (cons (car ls1) (comp-list (cdr ls1) (cdr ls2))))
-   (t (if (>= (len2 (car ls1)) (len2 (car ls2)))
-        (cons (car ls1) (comp-list (cdr ls1) ls2))
-        (cons (car ls2) (comp-list ls1 (cdr ls2)))))))
-
-
-(definec powerset (ls :lor) :lolor
-  (cond
-   ((endp ls) (cons '() '()))
-   (t (comp-list (add-rat (car ls) (powerset (cdr ls))) (powerset (cdr ls))))))
-
-(definec powerset-cons (x :rational ls :lolor) :lolor
-  (comp-list (add-rat x ls) ls))
+;; lemma to show that if powerset is descending, then powerset-cons is descending when they are equal
+(defthm descending-pw-pwcons (implies (and (rationalp x) 
+                   (lorp ls) 
+                   (descendingp ls) 
+                   (> x (car ls))
+                   (descending-powersetp (powerset (cons x ls))))
+              (descending-powersetp (powerset-cons x (powerset ls))))
+  :hints (("Goal" :use pw-pwcons)))
