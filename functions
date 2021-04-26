@@ -13,12 +13,14 @@
 (defdata lololor (listof lolor))
 
 ;; checks to see if the given list of rationals is in descendingp order
+;; lor -> bool
 (definec descendingp (ls :lor) :bool
   (or (endp (cdr ls))
       (and (> (car ls) (car (cdr ls)))
            (descendingp (cdr ls)))))
 
 ;; checks the 2 given lists and makes sure they are in the right order
+;; lor lor -> bool
 (definec compare-lists (ls1 :lor ls2 :lor) :bool
   (cond ((and (endp ls1) (endp ls2)) nil)
   ((and (consp ls1) (endp ls2)) t)
@@ -26,6 +28,7 @@
         (t (or (compare-lists (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2))))))
 
 ;; checks if the given lolor is a descendingp powerset
+;; lolor --> bool
 (definec descending-powersetp (ls :lolor) :bool
   (cond ((endp ls) t)
         ((endp (cdr ls)) (descendingp (car ls)))
@@ -34,11 +37,13 @@
                  (descending-powersetp (cdr ls))))))
 
 ;; checks if the rational is greater than all the values in the list of rationals
+;; rational lor -> bool
 (definec gte-allp (x :rational ls :lor) :bool
   (or (lendp ls) (and (> x (car ls)) (gte-allp x (cdr ls)))))
 
 ;; adds the given rational to the front of every list in the lolor
 ;; if it is greater than the first of each list in the lolor
+;; rational lolor -> lolor
 (definec add-rat (r :rational ls :lolor) :lolor
   (cond ((endp ls) '())
         ((gte-allp r (car ls))
@@ -46,6 +51,7 @@
         (t (add-rat r (cdr ls)))))
 
 ;; function to take in an element and powerset to build new powerset
+;; lolor lolor -> lolor
 (definec merge-sort (ls1 :lolor ls2 :lolor) :lolor
   (cond
    ((endp ls1) ls2)
@@ -56,6 +62,7 @@
         (cons (car ls2) (merge-sort ls1 (cdr ls2)))))))
 
 ;; creates the powerset of the given list of rationals
+;; lor -> lolor
 (definec powerset (ls :lor) :lolor
   :ic (descendingp ls)
   (cond
@@ -63,6 +70,7 @@
    (t (merge-sort (add-rat (car ls) (powerset (cdr ls))) (powerset (cdr ls))))))
 
 ;; creates a powerset with the given rational
+;; rational lolor -> lolor
 (definec powerset-cons (x :rational ls :lolor) :lolor
   (merge-sort (add-rat x ls) ls))
 
