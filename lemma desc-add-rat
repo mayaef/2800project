@@ -1,5 +1,4 @@
-;; Proof 3: descending-add-rat
-;; proven given lemma 2
+;; descending-add-rat
 
 Conjecture 1:
 (implies (and (natp n) (lolorp ls) (descending-powerset ls))
