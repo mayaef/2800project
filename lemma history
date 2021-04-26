@@ -3,12 +3,12 @@
 (thm (implies (and (lorp ls) (descending ls))
   (descending-powerset ls)))
 
-Lemma cons-descending-list
+Lemma descending-list
 ;; if you cons an element that is greater than descending list, get a descending list
 (implies (and (rationalp n) (lorp ls) (descending ls) (> n (car ls)))
          (descending (cons n ls)))
 
-Lemma descending-powerset-pf
+Lemma descending-ps
 (implies (and (lorp ls) (descending ls) (lolorp ps) (descending-powerset ps))
               (descending-powerset (cons ls ps)))
 
