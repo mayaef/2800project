@@ -27,6 +27,8 @@
         ((and (endp ls1) (consp ls2)) nil)
         (t (or (compare-lists0 (cdr ls1) (cdr ls2)) (> (car ls1) (car ls2))))))
 
+
+
 ;; checks if the given lolor is a descendingp powerset
 ;; lolor --> bool
 (definec descending-powersetp (ls :lolor) :bool
