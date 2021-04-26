@@ -43,3 +43,16 @@
                    (descendingp ls))
               (descending-powersetp (powerset ls)))
      :hints (("Goal" :use pw-cons-descending)))
+------------------------------------------------------------------------
+Additional lemmas that can be used to prove sublemmata
+
+;; Lemma descending-list: used to prove desc-add-rat
+;; shows that if you cons an element that is greater than descending list, get a descending list
+(implies (and (rationalp n) (lorp ls) (descending ls) (> n (car ls)))
+         (descending (cons n ls)))
+
+;; Lemma descending-ps: used to prove desc-add-rat
+;; shows that if you cons a descending list to a descending powerset, you maintain
+;; a descending powerset
+(implies (and (lorp ls) (descending ls) (lolorp ps) (descending-powerset ps))
+              (descending-powerset (cons ls ps)))
