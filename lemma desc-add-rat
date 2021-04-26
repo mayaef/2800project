@@ -44,7 +44,7 @@ Proof:
 (add-rat n ls)
 = {Def add-rat, C2, C3}
 (cons (cons n (car ls)) (add-rat n (cdr ls)))
-= {D5, D4, lemma descending-powerset ( (ls (cons n (car ls))) (ps (add-rat n (cdr ls))) )  }
+= {D5, D4, lemma descending-ps ( (ls (cons n (car ls))) (ps (add-rat n (cdr ls))) )  }
 (descending-powerset (cons (cons n (car ls)) (add-rat n (cdr ls))))
 = {Def add-rat}
 (descending-powerset (add-rat n ls))
