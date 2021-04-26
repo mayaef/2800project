@@ -1,0 +1,85 @@
+The structure of our project:
+
+FUNCTIONS
+- descendingp (lor -> bool): 
+    - checks to see if the given list of rationals is in descendingp order
+- compare-lists (lor lor -> bool):
+    - checks the 2 given lists and makes sure they are in the right order 
+- descending-powersetp (lolor --> bool):
+    - checks if the given lolor is a descendingp powerset
+- gte-allp (lor -> bool):
+    - checks if the rational is greater than all the values in the list of rationals
+- add-rat (rational lolor -> lolor): 
+    - adds the given rational to the front of every list in the lolor if it is greater than the first 
+      of each list in the lolor
+- merge-sort (lolor lolor -> lolor)
+    - function to take in an element and powerset to build new powerset
+- powerset (lor -> lolor):
+    - creates the powerset of the given list of rationals
+- powerset-cons (rational lolor -> lolor):
+    - creates a powerset with the given rational
+- also includes all checker tests for these functions
+
+PROOFS
+- desc-add-rat: shows that if powerset of a list is a descending powerset, add-rat of a rational 
+that's greater than the car of the list is also a descending-powerset
+    - Proven with: Pen-and-paper proof (in ACL2S is a skip-proof)
+    - Used by: expand-powerset
+- expand-merge-sort: shows that if 2 lolor are descending-powersets, then them merged 
+is also a descending powerset
+    - Proven with: N/A (in ACL2S is a skip-proof)
+    - Used by: expand-powerset
+- expand-powerset: shows that expanded powerset-cons is a descending-powerset when powerset is 
+a descending powerset
+    - Proven with: desc-add-rat, expand-merge-sort
+    - Used by: pw-cons-descending
+- pw-cons-descending: shows that if powerset of a list is a descending powerset, 
+then powerset-cons of a rational greater than the first of the list is also a descending powerset
+    - Proven with: expand-powerset
+    - Used by: main conjecture
+- MAIN CONJECTURE: Shows that using our powerset function when given a descending list,
+we get an output with 2 properties shown in descending-powersetp
+    - Proven with: pw-cons-descending
+    
+                                main conjecture
+                                      ^
+                                      |
+                                      |
+                                      |
+                                      |
+                                pw-cons-descending
+                                      ^
+                                      |
+                                      |
+                                      |
+                                      |
+                                expand-powerset
+                                    ^    ^
+                                    /    \
+                                   /      \
+                                  /        \
+                                 /          \
+                                /            \
+                               /              \
+                              /                \
+                       *desc-add-rat*       *expand-merge-sort*
+                        ^
+                        |
+                        |
+                        |
+                        |                               
+                  *descending-ps*
+                        ^
+                        |
+                        |
+                        |
+                        |                               
+                  descending-list
+                  
+*indicates unproven or that it uses a skip-proof*
+
+ADDITIONAL FILES
+- Lemma desc-add-rat } pen and paper proof for desc-add-rat and associated lemmas
+- Lemma History } all lemmas we have used, attempted and tested that did not succeed (personal progress)
+
+   
