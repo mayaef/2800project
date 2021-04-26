@@ -1,7 +1,9 @@
+;; lemma to show the powerset and powerset-cons relationship
 (defthm pw-pwcons (implies (and (rationalp x) (lorp ls) (descendingp ls) (> x (car ls)))
               (equal (powerset (cons x ls)) 
                      (powerset-cons x (powerset ls)))))
 
+;; lemma to show that if powerset is descending, then powerset-cons is descending when they are equal
 (defthm descending-pw-pwcons (implies (and (rationalp x) 
                    (lorp ls) 
                    (descendingp ls) 
@@ -10,6 +12,8 @@
               (descending-powersetp (powerset-cons x (powerset ls))))
   :hints (("Goal" :use pw-pwcons)))
 
+;; a lemma to help expand powerset and shows that if powerset of a list is a descending powerset, 
+;; then add-rat of a rational that's greater than the car of the list is also a descending-powerset
 (skip-proofs (defthm desc-add-rat (implies (and (rationalp x)
                              (lorp ls)
                              (descendingp ls)
@@ -17,12 +21,15 @@
                              (descending-powersetp (powerset ls)))
                              (descending-powersetp (add-rat x (powerset ls))))))
 
+;; to show that if 2 lolor are descending-powersets, then them merged is also a descending powerset
 (skip-proofs (defthm expand-merge-sort
                (implies (and (descending-powersetp ls1)
                              (descending-powersetp ls2)
-                             (descending-powersetp (powerset ls)))
+                             (lolorp ls1)
+                             (lolorp ls2))
                         (descending-powersetp (merge-sort ls1 ls2)))))
 
+;; to show that expanded powerset-cons is a descending-powerset when powerset is a descending powerset
 (defthm expand-powerset 
                (implies (and (rationalp x)
                              (lorp ls)
@@ -34,7 +41,8 @@
                :hints (("Goal" :use desc-add-rat)
                        ("Goal" :use expand-merge-sort)))
 
-
+;; to show that if powerset of a list is a descending powerset, then powerset-cons of a rational greater than
+;; the first of the list is also a descending powerset
 (defthm pw-cons-descending (implies (and (rationalp x)
                                          (lorp ls) 
                                          (descendingp ls)
@@ -43,6 +51,8 @@
                                     (descending-powersetp (powerset-cons x (powerset ls))))
   :hints (("Goal" :use expand-powerset)))
 
+;; our main conjecture we want to prove! To show that using our powerset function when given a descending list,
+;; we get an output with 2 properties shown in descending-powersetp
 (thm (implies (and (lorp ls)
                    (descendingp ls))
               (descending-powersetp (powerset ls)))
