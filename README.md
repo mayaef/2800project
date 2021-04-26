@@ -1,6 +1,6 @@
 # 2800project
 
-This is our 2800 final project. We worked on proving 
+This is our 2800 final project . We worked on proving 
 (thm (implies (and (lorp ls)
                    (descendingp ls))
               (descending-powersetp (powerset ls))))
