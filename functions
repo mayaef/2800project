@@ -72,7 +72,9 @@
 ;; creates a powerset with the given rational
 ;; rational lolor -> lolor
 (definec powerset-cons (x :rational ls :lolor) :lolor
-  (merge-sort (add-rat x ls) ls))
+  :ic (descending-powersetp ls)
+  (if (or (endp ls) (endp (car ls)) (> x (car (car ls))))
+    (merge-sort (add-rat x ls) ls) ls))
 
 ;; Checker tests
 ; descendingp
