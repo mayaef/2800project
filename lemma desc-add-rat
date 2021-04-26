@@ -1,0 +1,54 @@
+;; Proof 3: descending-add-rat
+;; proven given lemma 2
+
+Conjecture 1:
+(implies (and (natp n) (lolorp ls) (descending-powerset ls))
+        (descending-powerset (add-rat n ls)))
+        
+Proof by: Induction on (add-rat n ls)
+
+
+Induction Case ind:
+
+(implies (and (rationalp n) (lolorp ls) (> n (car (car ls))) (descending-powerset ls)
+	(implies (and (rationalp n) (lolorp (cdr ls))  (> n (car (car (cdr ls)))) (descending-powerset (cdr ls)))
+    	(descending-powerset (add-rat n (cdr ls)))))
+        (descending-powerset (add-rat n ls)))
+        
+Exportation: 
+(implies (and (consp ls) (rationalp n) (lolorp ls) (> n (car (car ls))) (descending-powerset ls)
+	(implies (and (rationalp n) (lolorp (cdr ls))  (> n (car (car (cdr ls)))) (descending-powerset (cdr ls)))
+    	(descending-powerset (add-rat n (cdr ls)))))
+        (descending-powerset (add-rat n ls)))
+
+Context:
+C1. (consp ls)
+C2. (rationalp n)
+C3. (lolorp ls)
+C4. (> n (car (car ls)))
+C5. (descending-powerset ls)
+C6. (implies (and (rationalp n) (lolorp (cdr ls))  (> n (car (car (cdr ls)))) (descending-powerset (cdr ls)))
+    	(descending-powerset (add-rat n (cdr ls))))
+
+
+Derived Context:
+D1. (lolorp (cdr ls)) {C1, C3}
+D2. (> n (car (car (cdr ls)))) {C4, C1}
+D3. (descending-powerset (cdr ls)) {C5, C1}
+D4. (descending-powerset (add-rat n (cdr ls))) {C6, D1, D2, D3, C2, MP}
+D5. (descending (cons n (car ls))) {lemma descending-list ((n n) (ls ls))}
+
+Goal:
+(descending-powerset (add-rat n ls))
+
+Proof:
+(add-rat n ls)
+= {Def add-rat, C2, C3}
+(cons (cons n (car ls)) (add-rat n (cdr ls)))
+= {D5, D4, lemma descending-powerset ( (ls (cons n (car ls))) (ps (add-rat n (cdr ls))) )  }
+(descending-powerset (cons (cons n (car ls)) (add-rat n (cdr ls))))
+= {Def add-rat}
+(descending-powerset (add-rat n ls))
+QED
+
+QED
